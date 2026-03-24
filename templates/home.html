@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row align-items-center py-5">
+    <div class="col-md-6 mb-5 mb-md-0 pe-md-5">
+        <h1 class="display-3 fw-bolder mb-4 text-dark" style="letter-spacing: -1px;">Find the Right <br/><span class="text-primary">Doctor</span> Today.</h1>
+        <p class="lead text-secondary mb-5 fs-4">Skip the waiting room. Browse trusted specialists, view real-time availability, and book your next appointment instantly.</p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-start">
+            <a href="{% url 'doctor_list' %}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm py-3 fs-5 fw-medium">Find a Doctor</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-5 py-3 fs-5 fw-medium">Create Account</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6 text-center text-md-end">
+        <img src="https://images.unsplash.com/photo-1638202993928-7267aad84c31?auto=format&fit=crop&q=80&w=1200" alt="Doctor Consultation" class="img-fluid rounded-5 shadow-lg" style="max-height: 500px; object-fit: cover; width: 100%;">
+    </div>
+</div>
+
+<div class="row mt-5 pt-5 text-center">
+    <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+            <div class="display-6 text-primary mb-3">🩺</div>
+            <h4 class="fw-bold">Top Specialists</h4>
+            <p class="text-muted mb-0">Book appointments with verified and experienced doctors across various specialties.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+            <div class="display-6 text-primary mb-3">📅</div>
+            <h4 class="fw-bold">Easy Scheduling</h4>
+            <p class="text-muted mb-0">View real-time availability and select a time slot that works best for your schedule.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100">
+            <div class="display-6 text-primary mb-3">🔒</div>
+            <h4 class="fw-bold">Secure Booking</h4>
+            <p class="text-muted mb-0">Your privacy is our priority. We guarantee secure booking without hidden fees.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

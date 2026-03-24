@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Doctors | HealthSync{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 pb-3 border-bottom">
+    <div>
+        <h2 class="fw-bolder mb-1 text-dark">Our Medical Specialists</h2>
+        <p class="text-muted mb-3 mb-md-0">Find the perfect doctor for your health needs.</p>
+    </div>
+    <form method="get" class="d-flex flex-wrap flex-md-nowrap bg-white p-2 rounded-5 shadow-sm align-items-center w-100 w-md-auto ms-xl-4">
+        <input type="text" name="search" class="form-control border-0 rounded-pill me-2 px-3" style="box-shadow: none; min-width: 200px;" placeholder="Search doctors by name..." value="{{ search_query }}">
+        <div class="vr mx-2 d-none d-md-block bg-secondary opacity-25"></div>
+        <select name="specialization" class="form-select border-0 mx-2" style="box-shadow: none; min-width: 180px;" onchange="this.form.submit()">
+            <option value="">All Specializations</option>
+            {% for spec in specializations %}
+                <option value="{{ spec }}" {% if spec == current_specialization %}selected{% endif %}>{{ spec }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary rounded-pill px-4 mt-2 mt-md-0 w-100 w-md-auto">Search</button>
+    </form>
+</div>
+
+<div class="row g-4">
+    {% for doctor in page_obj %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden text-center text-md-start">
+            {% if doctor.profile_image %}
+                <img src="{{ doctor.profile_image.url }}" class="card-img-top" alt="{{ doctor.name }}" style="height: 250px; object-fit: cover;">
+            {% else %}
+                <div class="bg-primary bg-opacity-10 d-flex align-items-center justify-content-center card-img-top" style="height: 250px;">
+                    <span class="text-primary fs-1 fw-bold text-uppercase">{{ doctor.name|slice:":1" }}</span>
+                </div>
+            {% endif %}
+            <div class="card-body d-flex flex-column p-4">
+                <h5 class="card-title fw-bold fs-4 mb-1">Dr. {{ doctor.name }}</h5>
+                <p class="card-text text-primary fw-medium mb-4 d-flex align-items-center justify-content-center justify-content-md-start">
+                    <span class="badge bg-primary bg-opacity-10 text-primary py-2 px-3 rounded-pill">{{ doctor.specialization }}</span>
+                </p>
+                <a href="{% url 'doctor_detail' doctor.id %}" class="btn btn-outline-primary mt-auto rounded-pill w-100 py-2 fw-medium">View Availability</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5 my-5">
+        <div class="display-1 text-muted opacity-25 mb-3">⚕️</div>
+        <h3 class="fw-bold text-dark">No doctors found</h3>
+        <p class="text-muted fs-5">We couldn't find any specialists matching your criteria. Try clearing the filter.</p>
+        <a href="{% url 'doctor_list' %}" class="btn btn-primary rounded-pill mt-3 px-4 py-2">View All Doctors</a>
+    </div>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav aria-label="Doctors pagination" class="mt-5">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link rounded-pill border-0 text-dark me-1" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if current_specialization %}&specialization={{ current_specialization }}{% endif %}">&laquo;</a></li>
+            <li class="page-item"><a class="page-link rounded-pill border-0 text-dark shadow-sm me-2" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_specialization %}&specialization={{ current_specialization }}{% endif %}">Prev</a></li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link rounded-pill border-0 text-muted me-1">&laquo;</span></li>
+            <li class="page-item disabled"><span class="page-link rounded-pill border-0 text-muted me-2">Prev</span></li>
+        {% endif %}
+        
+        <li class="page-item active"><span class="page-link rounded-pill px-4 shadow-sm border-0">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link rounded-pill border-0 text-dark shadow-sm ms-2" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_specialization %}&specialization={{ current_specialization }}{% endif %}">Next</a></li>
+            <li class="page-item"><a class="page-link rounded-pill border-0 text-dark ms-1" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_specialization %}&specialization={{ current_specialization }}{% endif %}">&raquo;</a></li>
+        {% else %}
+            <li class="page-item disabled"><span class="page-link rounded-pill border-0 text-muted ms-2">Next</span></li>
+            <li class="page-item disabled"><span class="page-link rounded-pill border-0 text-muted ms-1">&raquo;</span></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

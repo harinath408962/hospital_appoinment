@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Register | HealthSync{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bolder">Create an Account</h2>
+                    <p class="text-muted">Join HealthSync to book appointments easily.</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-medium">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text small">{{ field.help_text|safe }}</div>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="d-grid mt-4 pt-2">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold">Register</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add Bootstrap classes to Django form inputs
+    document.addEventListener("DOMContentLoaded", function() {
+        let inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'hidden' && input.type !== 'checkbox') {
+                input.classList.add('form-control', 'bg-light');
+            }
+        });
+    });
+</script>
+{% endblock %}

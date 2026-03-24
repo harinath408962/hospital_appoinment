@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | HealthSync{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bolder">Welcome Back</h2>
+                    <p class="text-muted">Login to manage your appointments.</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-medium">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-3 py-2">
+                            {{ form.non_field_errors|striptags }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold">Login</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="text-muted mb-0">Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none fw-bold">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add Bootstrap classes to Django form inputs
+    document.addEventListener("DOMContentLoaded", function() {
+        let inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'hidden') {
+                input.classList.add('form-control', 'form-control-lg', 'bg-light');
+            }
+        });
+    });
+</script>
+{% endblock %}
