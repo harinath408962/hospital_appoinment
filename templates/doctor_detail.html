@@ -29,32 +29,37 @@
             </div>
             <div class="card-body p-4">
                 {% if slots %}
-                    <div class="row g-3">
-                    {% for slot in slots %}
-                        <div class="col-md-6 col-xl-4">
-                            <div class="card h-100 border rounded-4 position-relative slot-card hover-shadow transition-all border-opacity-50">
-                                <div class="card-body text-center p-3">
-                                    <div class="mb-2 opacity-50 text-primary">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    {% regroup slots by date as slots_by_date %}
+                    {% for date_group in slots_by_date %}
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-3 d-flex align-items-center text-primary border-bottom pb-2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                {{ date_group.grouper|date:"l, F j, Y" }}
+                            </h5>
+                            <div class="row g-3">
+                            {% for slot in date_group.list %}
+                                <div class="col-sm-6 col-md-4 col-xl-3">
+                                    <div class="card h-100 border rounded-4 position-relative slot-card hover-shadow transition-all border-opacity-50">
+                                        <div class="card-body text-center p-3">
+                                            <p class="text-dark fw-bold mb-3 fs-6">{{ slot.start_time|time:"g:i A" }} - {{ slot.end_time|time:"g:i A" }}</p>
+                                            
+                                            {% if slot.is_booked %}
+                                                <button type="button" class="btn btn-danger btn-sm rounded-pill w-100 fw-bold border-2 opacity-75" disabled>Booked</button>
+                                            {% elif user.is_authenticated %}
+                                                <form method="post" action="{% url 'book_appointment' slot.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill w-100 fw-bold border-2" onclick="return confirm('Book appointment with Dr. {{ doctor.name }} on {{ slot.date }} at {{ slot.start_time }}?')">Book Slot</button>
+                                                </form>
+                                            {% else %}
+                                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-light text-primary btn-sm rounded-pill w-100 fw-medium">Login to Book</a>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                    <h6 class="fw-bold mb-1">{{ slot.date|date:"M j, Y" }}</h6>
-                                    <p class="text-muted small fw-medium mb-3">{{ slot.start_time|time:"g:i A" }} - {{ slot.end_time|time:"g:i A" }}</p>
-                                    
-                                    {% if slot.is_booked %}
-                                        <button type="button" class="btn btn-danger btn-sm rounded-pill w-100 fw-bold border-2 opacity-75" disabled>Booked</button>
-                                    {% elif user.is_authenticated %}
-                                        <form method="post" action="{% url 'book_appointment' slot.id %}">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill w-100 fw-bold border-2" onclick="return confirm('Book appointment with Dr. {{ doctor.name }} on {{ slot.date }} at {{ slot.start_time }}?')">Book Slot</button>
-                                        </form>
-                                    {% else %}
-                                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-light text-primary btn-sm rounded-pill w-100 fw-medium">Login to Book</a>
-                                    {% endif %}
                                 </div>
+                            {% endfor %}
                             </div>
                         </div>
                     {% endfor %}
-                    </div>
                 {% else %}
                     <div class="text-center py-5 bg-light rounded-4">
                         <div class="display-3 text-muted opacity-25 mb-3">📅</div>
